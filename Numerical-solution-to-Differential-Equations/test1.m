@@ -1,0 +1,51 @@
+%%
+clear;clc;
+syms x
+p1 = 1 + x^2;
+q1 = x;
+u1 = exp(-x)*(x-1)^2;
+f1 = diff(p1*diff(u1,x), x) - q1*u1;
+
+p = @(x) 1+x*x;
+q = @(x) x;
+u = @(x) exp(-x).*(x-1).*(x-1);
+f = @(x) (x^2 + 1)*(2*exp(-x) - 2*exp(-x)*(2*x - 2) + exp(-x)*(x - 1)^2) + 2*x*(exp(-x)*(2*x - 2) - exp(-x)*(x - 1)^2) - x*exp(-x)*(x - 1)^2;
+a = 2; b = -3; c = 0;
+x0 = 0; xn = 1;
+ua = 1; 
+n = 80;
+[x, U] = central_FD_slef_ad(x0, xn, ua, a, b, c, p, q, f, n);
+%% plot
+% Calculate error between real u(x) and U
+error = U' - u(x);
+
+% Create a new figure
+figure;
+
+% Plot actual u(x) and U on the left axis
+yyaxis left;
+plot(x, u(x), 'linewidth', 1.7, 'Color', [0.3 0.5 0.8]); % Actual u(x), using light blue color
+hold on;
+plot(x, U, 'linewidth', 1.7, 'linestyle', '--', 'Color', [0.8 0.2 0.2]); % U, using red dashed line
+ylabel('u(x)', 'FontSize', 16); % Set y-axis label for left y-axis
+
+% Plot error on the right axis
+yyaxis right;
+plot(x, error, 'linewidth', 1.5, 'Color', [0.2 0.6 0.2]); % Error, using green color
+ylabel('Error', 'FontSize', 16); % Set y-axis label for right y-axis
+
+% Set x-axis label and title
+xlabel('x', 'FontSize', 16); % Set x-axis label
+title('Comparison of Real u(x) and U', 'FontSize', 16); % Set title
+
+% Set legend and axis properties
+legend({'Real u(x)', 'U', 'Error: U - u'}, 'FontSize', 12, 'Location', 'best'); % Set legend labels, font size, and location
+grid on; % Turn on grid
+grid minor; % Show minor grid lines
+set(gca, 'FontSize', 14); % Set font size for axis labels and ticks
+set(gca, 'FontName', 'Arial'); % Set font style
+set(gca, 'LineWidth', 1.2); % Set axis line width
+
+% Set figure background color and position
+set(gcf, 'Color', [1 1 1]); % Set background color of the figure to white
+set(gcf, 'Position', [100, 100, 800, 600]); % Set position and size of the figure
